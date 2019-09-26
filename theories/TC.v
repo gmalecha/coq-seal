@@ -12,9 +12,6 @@ Require Import seal.seal.
 
 Module __seal.
 
-  Local Notation "<% x %>" := (ltac:(let p y := exact y in quote_term x p))
-                                (only parsing).
-
   Local Definition q_eq := <% @eq %>.
   Local Definition q_eq_refl := <% @eq_refl %>.
   Local Definition q_opaque := <% @_opaque %>.
@@ -45,9 +42,8 @@ Module __seal.
     ; bind := @tmBind }.
 
   Local Definition mk_sealed (name : string) (type def : Ast.term) : TM kername :=
-    tmDefinition name
-                 None
-                 (tApp q_seal (type :: def :: def :: tApp q_eq_refl (type :: def :: nil) :: nil)).
+    tmOpaqueDefinition name None
+      (tApp q_seal (type :: def :: def :: tApp q_eq_refl (type :: def :: nil) :: nil)).
 
   Local Definition mk_eq (name base_kn : string) (type def sealed : Ast.term) : TM kername :=
     tmDefinition name
